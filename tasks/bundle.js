@@ -58,11 +58,11 @@ function _pathToPkg(base, pkgs) {
 /**
  * Generate a object by expanding a package.json as if we combine several packages into the current project.
  * @private
+ * @param {object} pkgInfo - Original package.json to extend
  * @param {object} pkgs - Packages to merge into the current project
  * @returns {object} - Agregated glob selector for the packages.
 */
-function _mergeDeps(pkgs) {
-  const pkgInfo = JSON.parse(fs.readFileSync('./package.json'));
+function _mergeDeps(pkgInfo, pkgs) {
   _.each(pkgs, (props, pkg) => {
     const deps = JSON.parse(fs.readFileSync(path.join('./node_modules', pkg, 'package.json'))).dependencies;
     _.assign(pkgInfo.dependencies, deps);
@@ -124,7 +124,8 @@ module.exports = function(gulp, args) {
   });
 
   gulp.task('bundle:mergeDeps', () => {
-    return fs.writeFileSync(path.join(bundleOutputDir, 'package.json'), JSON.stringify(_mergeDeps(bundledPkgs), null, 2));
+    return fs.writeFileSync(path.join(bundleOutputDir, 'package.json'),
+      JSON.stringify(_mergeDeps(JSON.parse(fs.readFileSync('./package.json')), bundledPkgs), null, 2));
   });
 
   gulp.task('bundle:installDeps', () => {
