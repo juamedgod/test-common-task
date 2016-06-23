@@ -58,9 +58,9 @@ function _pathToPkg(base, pkgs) {
 /**
  * Generate a object by expanding a package.json as if we combine several packages into the current project.
  * @private
- * @param {object} pkgInfo - Original package.json to extend
+ * @param {object} pkgInfo - Content of original package.json to extend
  * @param {object} pkgs - Packages to merge into the current project
- * @returns {object} - Agregated glob selector for the packages.
+ * @returns {object} - Resulting package.json
 */
 function _mergeDeps(pkgInfo, pkgs) {
   _.each(pkgs, (props, pkg) => {
