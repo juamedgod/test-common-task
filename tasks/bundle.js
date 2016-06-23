@@ -16,7 +16,8 @@ const runSequence = require('run-sequence');
  * Create a glob selector from a list of npm packages
  * @private
  * @param {string} base - Directory base (should have a `node_modules` folder)
- * @param {object} pkgs - Object where the key is the name of the package and key is the glob filter for files relative to the directory of the package.
+ * @param {object} pkgs - Object where the key is the name of the package and key is the glob
+ * filter for files relative to the directory of the package.
  * @returns {array} - Agregated glob selector for the packages.
  * @example
  * const pkgs = {
@@ -24,7 +25,7 @@ const runSequence = require('run-sequence');
  *   'fs-extra': '**\/*.js',
  * }
  * _relativizePkgs('./', 'conf/php.ini');
-*/
+ */
 function _relativizePkgs(base, pkgs) {
   const result = [];
   _.map(pkgs, (globs, pkg) => {
@@ -46,7 +47,7 @@ function _relativizePkgs(base, pkgs) {
  * @param {string} base - Directory base (should have a `node_modules` folder)
  * @param {object} pkgs - List of packages
  * @returns {array} - Paths to the modules
-*/
+ */
 function _pathToPkg(base, pkgs) {
   const result = [];
   _.map(pkgs, (pkg) => {
@@ -56,12 +57,13 @@ function _pathToPkg(base, pkgs) {
 }
 
 /**
- * Generate a object by expanding a package.json as if we combine several packages into the current project.
+ * Generate a object by expanding a package.json as if we combine several packages into the current
+ * project.
  * @private
  * @param {object} pkgInfo - Content of original package.json to extend
  * @param {object} pkgs - Packages to merge into the current project
  * @returns {object} - Resulting package.json
-*/
+ */
 function _mergeDeps(pkgInfo, pkgs) {
   _.each(pkgs, (props, pkg) => {
     const deps = JSON.parse(fs.readFileSync(path.join('./node_modules', pkg, 'package.json'))).dependencies;
@@ -77,26 +79,54 @@ function _mergeDeps(pkgInfo, pkgs) {
  * @private
  * @param {string} folder - Folder to scan
  * @returns {array} - List of packages in the folder
-*/
+ */
 function _scanPackagesFolder(folder) {
   return fs.readdirSync(folder)
   .filter((x) => x !== '.bin');
 }
 
-module.exports = function(gulp, args) {
+/**
+ * bundle tasks:
+ * - `bundle`
+ * - `bundle-webpack`
+ * - `bundle:clean`
+ * - `bundle:preinstallPackages`
+ * - `bundle:copySources`
+ * - `bundle:copyBundledPackages`
+ * - `bundle:mergeDeps`
+ * - `bundle:installDeps`
+ * - `bundle:webpackize`
+ * - `bundle:deleteSources`
+ * - `bundle:renameEntryfile`
+ * - `bundle:addRuntime`
+ * - `bundle:addLicense`
+ * - `bundle:compress`
+ * @param {object} gulp - Gulp instance
+ * @param {object} args
+ * @param {string} args.buildDir - Directory where the result of the bundle operations will be stored
+ * @param {string} args.artifactName - Base name for the artifacts
+ * @param {array|string} args.sources - Glob selector for application sources
+ * @param {object} [args.bundledPkgs=null] - Object where the key is the name of the package to
+ * bundle and key is the glob filter for files relative to the directory of the package.
+ * @param {string} [args.entrypoint='index.js'] - Name of the file used as entrypoint for the application
+ * @param {string} [args.runtimeName=null] - In case the app needs a runtime to be included, name
+ * of that runtime
+ * @param {string} [args.runtimeUrl=null] - In case the app needs a runtime to be included, url
+ * where the runtime will be downloaded from
+ */
+function bundle(gulp, args) {
   const buildDir = args.buildDir;
   const bundleOutputName = args.artifactName;
   const sources = args.sources;
   const bundledPkgs = args.bundledPkgs || null;
   const entrypoint = args.entrypoint || 'index.js';
-  const requiresRuntime = args.requiresRuntime || false;
   const runtimeName = args.runtimeName || null;
   const runtimeUrl = args.runtimeUrl || null;
   const bundleOutputDir = `${buildDir}/bundle`;
 
   function _checkRuntimeUrl() {
-    if (requiresRuntime && (!runtimeUrl || !runtimeName)) {
-      throw new Error('Runtime is required but not provided');
+    if (runtimeName && !runtimeUrl) {
+      throw new Error('Runtime is required but url not provided');
     }
   }
 
@@ -231,4 +261,6 @@ module.exports = function(gulp, args) {
       'bundle:compress'
     );
   });
-};
+}
+
+module.exports = bundle;

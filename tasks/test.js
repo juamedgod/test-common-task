@@ -1,7 +1,16 @@
 const eslint = require('gulp-eslint');
 const istanbul = require('gulp-istanbul');
 
-module.exports = function(gulp, args) {
+/**
+ * test tasks:
+ * - `test`
+ * - `pre-test`
+ * @param {object} gulp - Gulp instance
+ * @param {object} args
+ * @param {array|string} args.sources - Glob selector for application sources
+ * @param {array|string} args.tests - Glob selector for application tests sources
+ */
+function test(gulp, args) {
   const tests = args.tests;
   const sources = args.sources;
   const formatReportsConfig = args.formatReportsConfig || {
@@ -44,4 +53,6 @@ module.exports = function(gulp, args) {
       // Enforce a coverage of at least 90%
       // .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
   });
-};
+}
+
+module.exports = test;

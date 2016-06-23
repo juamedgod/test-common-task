@@ -15,7 +15,21 @@ function _fixPackageJsonForNpm(pkgInfo) {
   return pkgInfo;
 }
 
-module.exports = function(gulp, args) {
+/**
+ * npm tasks:
+ * - `npm-pack`
+ * - `npm-pack:clean`
+ * - `npm-pack:transpile`
+ * - `npm-pack:copyMeta`
+ * - `npm-pack:fixPackageInfo`
+ * @param {object} gulp - Gulp instance
+ * @param {object} args
+ * @param {string} args.buildDir - Directory where the result of the bundle operations will be stored
+ * @param {array|string} args.sources - Glob selector for application js sources
+ * @param {array|string} args.meta - Glob selector for application source which is not js but
+ * should be included in the npm package
+ */
+function npm(gulp, args) {
   const buildDir = args.buildDir;
   const npmPackageOutputDir = `${buildDir}/npm-package`;
   const sources = args.sources;
@@ -51,4 +65,6 @@ module.exports = function(gulp, args) {
       'npm-pack:fixPackageInfo'
     );
   });
-};
+}
+
+module.exports = npm;

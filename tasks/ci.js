@@ -2,7 +2,13 @@ const _ = require('lodash');
 const eslintTeamcity = require('eslint-teamcity');
 const runSequence = require('run-sequence');
 
-module.exports = function(gulp) {
+/**
+ * ci tasks:
+ * - `ci-lint`
+ * - `ci-test`
+ * @param {object} gulp - Gulp instance
+ */
+function ci(gulp) {
   const formatReportsConfig = {
     test: 'mocha-teamcity-reporter',
     coverage: ['lcov', 'json', 'text-summary', 'html', 'teamcity'],
@@ -17,4 +23,6 @@ module.exports = function(gulp) {
       runSequence('clean', name);
     });
   });
-};
+}
+
+module.exports = ci;
