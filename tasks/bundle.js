@@ -126,7 +126,7 @@ function _scanPackagesFolder(folder) {
  * @param {string} args.buildDir - Directory where the result of the bundle operations will be stored
  * @param {string} args.artifactName - Base name for the artifacts
  * @param {array|string} args.sources - Glob selector for application sources
- * @param {array|string} [args.postBundleFilter=null] - Glob selector for application sources you
+ * @param {array|string} [args.postBundleFilter=[]] - Glob selector for application sources you
  * want to filter out in the bundle
  * @param {array|string} [args.postWebpackFilter=args.sources] - Glob selector for application
  * sources you want to filter out after doing webpack in the bundle
@@ -147,7 +147,7 @@ function bundle(gulp, args) {
   const runtimeName = args.runtimeName || null;
   const runtimeUrl = args.runtimeUrl || null;
   const bundleOutputDir = `${buildDir}/bundle`;
-  const postBundleFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) || null;
+  const postBundleFilter = _relativizeGlob(bundleOutputDir, args.postBundleFilter) || [];
   const postWebpackFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) || _relativizeGlob(bundleOutputDir, args.sources);
 
   function _checkRuntimeUrl() {
