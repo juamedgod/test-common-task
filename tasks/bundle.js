@@ -126,8 +126,10 @@ function _scanPackagesFolder(folder) {
  * @param {string} args.buildDir - Directory where the result of the bundle operations will be stored
  * @param {string} args.artifactName - Base name for the artifacts
  * @param {array|string} args.sources - Glob selector for application sources
- * @param {array|string} [args.postBundleFilter=args.sources] - Glob selector for application sources you want to
- * filter out in the bundle
+ * @param {array|string} [args.postBundleFilter=null] - Glob selector for application sources you
+ * want to filter out in the bundle
+ * @param {array|string} [args.postWebpackFilter=args.sources] - Glob selector for application
+ * sources you want to filter out after doing webpack in the bundle
  * @param {object} [args.bundledPkgs=null] - Object where the key is the name of the package to
  * bundle and key is the glob filter for files relative to the directory of the package.
  * @param {string} [args.entrypoint='index.js'] - Name of the file used as entrypoint for the application
@@ -145,7 +147,8 @@ function bundle(gulp, args) {
   const runtimeName = args.runtimeName || null;
   const runtimeUrl = args.runtimeUrl || null;
   const bundleOutputDir = `${buildDir}/bundle`;
-  const postBundleFilter = _relativizeGlob(bundleOutputDir, args.postBundleFilter) || _relativizeGlob(bundleOutputDir, args.sources);
+  const postBundleFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) || null;
+  const postWebpackFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) || _relativizeGlob(bundleOutputDir, args.sources);
 
   function _checkRuntimeUrl() {
     if (runtimeName && !runtimeUrl) {
@@ -222,7 +225,7 @@ function bundle(gulp, args) {
   });
 
   gulp.task('bundle:deleteWebpackedSources', () => {
-    return del(_pathToPkg(bundleOutputDir, _.keys(bundledPkgs)));
+    return del(postWebpackFilter.concat(_pathToPkg(bundleOutputDir, _.keys(bundledPkgs))));
   });
 
   gulp.task('bundle:postBundleFilter', () => {
