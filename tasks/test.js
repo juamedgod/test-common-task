@@ -4,6 +4,7 @@ const runSequence = require('run-sequence');
 const eslint = require('gulp-eslint');
 const istanbul = require('gulp-istanbul');
 const del = require('del');
+const mocha = require('gulp-mocha');
 
 
 /**
