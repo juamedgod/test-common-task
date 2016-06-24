@@ -42,6 +42,26 @@ function _relativizePkgs(base, pkgs) {
 }
 
 /**
+ * Make globs relative to a base
+ * @private
+ * @param {string} base - Directory base
+ * @param {array|string} globs - Globs to relativize
+ * @returns {array} - Globs relativized
+ */
+function _relativizeGlob(base, globs) {
+  const result = [];
+  _.each(globs, (i) => {
+    let exclude = '';
+    if (i.substring(0, 1) === '!') {
+      exclude = '!';
+      i = i.substring(1);
+    }
+    result.push(`${exclude}${base}/${i}`);
+  });
+  return result;
+}
+
+/**
  * Get the path of a package relative to certain base
  * @private
  * @param {string} base - Directory base (should have a `node_modules` folder)
@@ -106,6 +126,8 @@ function _scanPackagesFolder(folder) {
  * @param {string} args.buildDir - Directory where the result of the bundle operations will be stored
  * @param {string} args.artifactName - Base name for the artifacts
  * @param {array|string} args.sources - Glob selector for application sources
+ * @param {array|string} [args.postBundleFilter=args.sources] - Glob selector for application sources you want to
+ * filter out in the bundle
  * @param {object} [args.bundledPkgs=null] - Object where the key is the name of the package to
  * bundle and key is the glob filter for files relative to the directory of the package.
  * @param {string} [args.entrypoint='index.js'] - Name of the file used as entrypoint for the application
@@ -123,6 +145,7 @@ function bundle(gulp, args) {
   const runtimeName = args.runtimeName || null;
   const runtimeUrl = args.runtimeUrl || null;
   const bundleOutputDir = `${buildDir}/bundle`;
+  const postBundleFilter = _relativizeGlob(bundleOutputDir, args.postBundleFilter) || _relativizeGlob(bundleOutputDir, args.sources);
 
   function _checkRuntimeUrl() {
     if (runtimeName && !runtimeUrl) {
@@ -193,16 +216,17 @@ function bundle(gulp, args) {
       externals
     };
 
-    return gulp.src([`${bundleOutputDir}/index.js`], {base: bundleOutputDir})
+    return gulp.src([`${bundleOutputDir}/${entrypoint}`], {base: bundleOutputDir})
       .pipe(webpack(webpackConfig))
       .pipe(gulp.dest(bundleOutputDir));
   });
 
-  gulp.task('bundle:deleteSources', () => {
-    return del([
-      `${bundleOutputDir}/index.js`,
-      `${bundleOutputDir}/cli{,/**}`,
-    ].concat(_pathToPkg(bundleOutputDir, _.keys(bundledPkgs))));
+  gulp.task('bundle:deleteWebpackedSources', () => {
+    return del(_pathToPkg(bundleOutputDir, _.keys(bundledPkgs)));
+  });
+
+  gulp.task('bundle:postBundleFilter', () => {
+    return del(postBundleFilter.concat(_pathToPkg(bundleOutputDir, _.keys(bundledPkgs))));
   });
 
   gulp.task('bundle:renameEntryfile', () => {
@@ -210,12 +234,10 @@ function bundle(gulp, args) {
   });
 
   gulp.task('bundle:addRuntime', () => {
-    if (requiresRuntime) {
-      return download(runtimeUrl)
-        .pipe(rename(`./${runtimeName}`))
-        .pipe(chmod(755))
-        .pipe(gulp.dest(`${bundleOutputDir}/runtime`));
-    }
+    return download(runtimeUrl)
+      .pipe(rename(`./${runtimeName}`))
+      .pipe(chmod(755))
+      .pipe(gulp.dest(`${bundleOutputDir}/runtime`));
   });
 
   gulp.task('bundle:addLicense', () => {
@@ -241,7 +263,8 @@ function bundle(gulp, args) {
       'bundle:mergeDeps',
       'bundle:installDeps',
       'bundle:webpackize',
-      'bundle:deleteSources',
+      'bundle:deleteWebpackedSources',
+      'bundle:postBundleFilter',
       'bundle:renameEntryfile',
       'bundle:addRuntime',
       'bundle:addLicense',
@@ -256,6 +279,7 @@ function bundle(gulp, args) {
       'bundle:preinstallPackages',
       'bundle:copySources',
       'bundle:installDeps',
+      'bundle:postBundleFilter',
       'bundle:addRuntime',
       'bundle:addLicense',
       'bundle:compress'
