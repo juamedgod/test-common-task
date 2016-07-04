@@ -1,27 +1,30 @@
 const eslintTeamcity = require('eslint-teamcity');
 
- /**
-  * ci tasks:
-  * - `ci-lint`
-  * - `ci-test`
-  * - `ci-test:prepare`
-  * - `ci-test:execute`
-  * - `ci-test:clean`
-  * @param {object} gulp - Gulp instance
-  * @param {object} args
-  * @param {array|string} args.sources - Glob selector for application sources
-  * @param {array|string} args.tests - Glob selector for application tests sources
-  * @param {object} [args.reportsConfig] - Configuration parameters for reporters
-  */
-function ci(gulp, args) {
-  if (!args.reportsConfig) {
-    args.reportsConfig = {
-      test: 'mocha-teamcity-reporter',
-      coverage: ['lcov', 'json', 'text-summary', 'html', 'teamcity'],
-      lint: eslintTeamcity
-    };
+module.exports = function(gulp) {
+  /**
+   * ci tasks:
+   * - `ci-lint`
+   * - `ci-test`
+   * - `ci-test:prepare`
+   * - `ci-test:execute`
+   * - `ci-test:clean`
+   * @param {object} opts
+   * @param {array|string} opts.sources - Glob selector for application sources
+   * @param {array|string} opts.tests - Glob selector for application tests sources
+   * @param {object} [opts.reportsConfig] - Configuration parameters for reporters
+   */
+  function ci(opts) {
+    opts = Object.assign({}, opts || {});
+    if (!opts.reportsConfig) {
+      opts.reportsConfig = {
+        test: 'mocha-teamcity-reporter',
+        coverage: ['lcov', 'json', 'text-summary', 'html', 'teamcity'],
+        lint: eslintTeamcity
+      };
+    }
+    const namespace = opts.namespace || null;
+    require('./test.js')(gulp)(Object.assign({}, opts, {namespace: namespace ? `${namespace}-ci`: 'ci'}));
   }
-  require('./test.js')(gulp, args, 'ci');
-}
+  return ci;
+};
 
-module.exports = ci;
