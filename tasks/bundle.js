@@ -117,6 +117,7 @@ module.exports = function(gulp) {
    * - `bundle:copyBundledPackages`
    * - `bundle:mergeDeps`
    * - `bundle:installDeps`
+   * - `bundle:postBundleFilter`
    * - `bundle:webpackize`
    * - `bundle:deleteSources`
    * - `bundle:renameEntryfile`
