@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
@@ -147,7 +149,8 @@ module.exports = function(gulp) {
     const runtimeUrl = args.runtimeUrl || null;
     const bundleOutputDir = `${buildDir}/bundle`;
     const postBundleFilter = _relativizeGlob(bundleOutputDir, args.postBundleFilter) || [];
-    const postWebpackFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) || _relativizeGlob(bundleOutputDir, args.sources);
+    const postWebpackFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) ||
+                                _relativizeGlob(bundleOutputDir, args.sources);
 
     function _checkRuntimeUrl() {
       if (runtimeName && !runtimeUrl) {
@@ -180,7 +183,8 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:mergeDeps', () => {
       return fs.writeFileSync(path.join(bundleOutputDir, 'package.json'),
-                              JSON.stringify(_mergeDeps(JSON.parse(fs.readFileSync('./package.json')), bundledPkgs), null, 2));
+                              JSON.stringify(_mergeDeps(JSON.parse(fs.readFileSync('./package.json')),
+                                              bundledPkgs), null, 2));
     });
 
     gulp.task('bundle:installDeps', () => {

@@ -1,3 +1,5 @@
+'use strict';
+
 const eslintTeamcity = require('eslint-teamcity');
 
 module.exports = function(gulp) {
@@ -23,8 +25,7 @@ module.exports = function(gulp) {
       };
     }
     const namespace = opts.namespace || null;
-    require('./test.js')(gulp)(Object.assign({}, opts, {namespace: namespace ? `${namespace}-ci`: 'ci'}));
+    require('./test.js')(gulp)(Object.assign({}, opts, {namespace: namespace ? `${namespace}-ci` : 'ci'}));
   }
   return ci;
 };
-

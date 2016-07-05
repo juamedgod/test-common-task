@@ -32,5 +32,8 @@
     "mocha-teamcity-cov-reporter": "^0.0.1",
     "mocha-teamcity-reporter": "^1.0.0"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "eslint": "^2.13.1",
+    "eslint-config-airbnb-base": "^3.0.1"
+  }
 }

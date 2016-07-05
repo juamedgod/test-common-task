@@ -33,7 +33,7 @@ module.exports = function(gulp) {
     };
 
     function taskName(n) {
-      return namespace ? `${namespace}-${n}` : n ;
+      return namespace ? `${namespace}-${n}` : n;
     }
 
     gulp.task(taskName('lint'), () => {
@@ -88,4 +88,3 @@ module.exports = function(gulp) {
   }
   return test;
 };
-

@@ -1,3 +1,5 @@
+'use strict';
+
 const fs = require('fs');
 const path = require('path');
 const del = require('del');
@@ -38,7 +40,7 @@ module.exports = function(gulp) {
     const meta = opts.meta;
 
     function taskName(n) {
-      return namespace ? `${namespace}-${n}` : n ;
+      return namespace ? `${namespace}-${n}` : n;
     }
 
     gulp.task(taskName('npm-pack:clean'), () => {
@@ -59,8 +61,8 @@ module.exports = function(gulp) {
     });
 
     gulp.task(taskName('npm-pack:fixPackageInfo'), () => {
-      return fs.writeFileSync(path.join(npmPackageOutputDir, 'package.json'),
-                              JSON.stringify(_fixPackageJsonForNpm(JSON.parse(fs.readFileSync('./package.json'))), null, 2));
+      return fs.writeFileSync(path.join(npmPackageOutputDir, 'package.json'), JSON.stringify(_fixPackageJsonForNpm(
+                                JSON.parse(fs.readFileSync('./package.json'))), null, 2));
     });
 
     gulp.task(taskName('npm-pack'), () => {
