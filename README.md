@@ -24,4 +24,4 @@ commonTasks.bundle(gulp, {
 
 ## Task families
 
-Currently there are four task families: `bundle`, `ci`, `npm` and `test`.
+Currently there are this task families: `bundle`, `ci`, `npm`, `test` and `install-node`.
