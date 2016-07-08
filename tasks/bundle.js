@@ -9,8 +9,7 @@ const webpack = require('webpack-stream');
 const rename = require('gulp-rename');
 const chmod = require('gulp-chmod');
 const download = require('gulp-download');
-const tar = require('gulp-tar');
-const gzip = require('gulp-gzip');
+const shell = require('gulp-shell');
 const runSequence = require('run-sequence');
 
 module.exports = function(gulp) {
@@ -253,11 +252,9 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle:compress', () => {
-      return gulp.src(`${bundleOutputDir}{,/**}`, {base: bundleOutputDir})
-        .pipe(rename((p) => p.dirname = path.join(bundleOutputName, p.dirname)))
-        .pipe(tar(`${bundleOutputName}.tar`))
-        .pipe(gzip())
-        .pipe(gulp.dest(buildDir));
+      return gulp.src('')
+        .pipe(shell(`tar czf ${bundleOutputName}.tar.gz bundle/ --transform s/^bundle/${bundleOutputName}/`,
+                    {cwd: buildDir}));
     });
 
     gulp.task('bundle-webpack', () => {
