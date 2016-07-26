@@ -134,6 +134,7 @@ module.exports = function(gulp) {
    * @param {object} [args.bundledPkgs=null] - Object where the key is the name of the package to
    * bundle and key is the glob filter for files relative to the directory of the package.
    * @param {string} [args.entrypoint='index.js'] - Name of the file used as entrypoint for the application
+   * @param {string} [args.runtimeDestDir='./runtime'] - Folder where the runtime will be stored
    * @param {string} [args.runtimeName=null] - In case the app needs a runtime to be included, name
    * of that runtime
    * @param {string} [args.runtimeUrl=null] - In case the app needs a runtime to be included, url
@@ -145,6 +146,7 @@ module.exports = function(gulp) {
     const sources = args.sources;
     const bundledPkgs = args.bundledPkgs || null;
     const entrypoint = args.entrypoint || 'index.js';
+    const runtimeDestDir = args.runtimeDestDir || './runtime';
     const runtimeName = args.runtimeName || null;
     const runtimeUrl = args.runtimeUrl || null;
     const bundleOutputDir = `${buildDir}/bundle`;
@@ -243,7 +245,7 @@ module.exports = function(gulp) {
       return download(runtimeUrl)
         .pipe(rename(`./${runtimeName}`))
         .pipe(chmod(755))
-        .pipe(gulp.dest(`${bundleOutputDir}/runtime`));
+        .pipe(gulp.dest(path.join(bundleOutputDir, runtimeDestDir)));
     });
 
     gulp.task('bundle:addLicense', () => {
