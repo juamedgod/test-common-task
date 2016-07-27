@@ -132,13 +132,15 @@ module.exports = function(gulp) {
    * @param {array|string} [args.postWebpackFilter=args.sources] - Glob selector for application
    * sources you want to filter out after doing webpack in the bundle
    * @param {object} [args.bundledPkgs=null] - Object where the key is the name of the package to
-   * bundle and key is the glob filter for files relative to the directory of the package.
+   * bundle and key is the glob filter for files relative to the directory of the package
    * @param {string} [args.entrypoint='index.js'] - Name of the file used as entrypoint for the application
-   * @param {string} [args.runtimeDestDir='./runtime'] - Folder where the runtime will be stored
-   * @param {string} [args.runtimeName=null] - In case the app needs a runtime to be included, name
-   * of that runtime
-   * @param {string} [args.runtimeUrl=null] - In case the app needs a runtime to be included, url
-   * where the runtime will be downloaded from
+   * @param {object} [args.runtime] - Properties of the runtime to be installed. By default it installs node 6.2.x. Set
+   * to `null` to install no runtime.
+   * @param {string} [args.runtime.destDir='./runtime'] - Folder where the runtime will be stored
+   * @param {string} [args.runtime.name='node'] - Name of the runtime binary to be included
+   * @param {string} [args.runtime.version='6.2.1'] - Version of the node runtime to be included.
+   * @param {string} [args.runtime.url] - If defined, it overrides the URL where the runtime is downloaded from (then
+   * `runtime.version` has no effect)
    */
   function bundle(args) {
     const buildDir = args.buildDir;
@@ -146,19 +148,22 @@ module.exports = function(gulp) {
     const sources = args.sources;
     const bundledPkgs = args.bundledPkgs || null;
     const entrypoint = args.entrypoint || 'index.js';
-    const runtimeDestDir = args.runtimeDestDir || './runtime';
-    const runtimeName = args.runtimeName || null;
-    const runtimeUrl = args.runtimeUrl || null;
+    const runtime = args.runtime || {};
+    if (_.isObject(runtime)) {
+      _.defaults(runtime, {
+        destDir: './runtime',
+        name: 'node',
+        version: '6.2.1',
+        url: null
+      });
+    }
+    if (!runtime.url) {
+      runtime.url = `https://nami-prod.s3.amazonaws.com/runtimes/node-v${runtime.version}`;
+    }
     const bundleOutputDir = `${buildDir}/bundle`;
     const postBundleFilter = _relativizeGlob(bundleOutputDir, args.postBundleFilter) || [];
     const postWebpackFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) ||
                                 _relativizeGlob(bundleOutputDir, args.sources);
-
-    function _checkRuntimeUrl() {
-      if (runtimeName && !runtimeUrl) {
-        throw new Error('Runtime is required but url not provided');
-      }
-    }
 
     gulp.task('bundle:clean', () => {
       return del([
@@ -242,10 +247,14 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle:addRuntime', () => {
-      return download(runtimeUrl)
-        .pipe(rename(`./${runtimeName}`))
-        .pipe(chmod(755))
-        .pipe(gulp.dest(path.join(bundleOutputDir, runtimeDestDir)));
+      if (_.isObject(runtime)) {
+        return download(runtime.url)
+          .pipe(rename(`./${runtime.name}`))
+          .pipe(chmod(755))
+          .pipe(gulp.dest(path.join(bundleOutputDir, runtime.destDir)));
+      } else {
+        return console.log('No runtime to download. Skipping...');
+      }
     });
 
     gulp.task('bundle:addLicense', () => {
@@ -260,7 +269,6 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle-webpack', () => {
-      _checkRuntimeUrl();
       runSequence(
         'bundle:clean',
         'bundle:preinstallPackages',
@@ -279,7 +287,6 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle', () => {
-      _checkRuntimeUrl();
       runSequence(
         'bundle:clean',
         'bundle:preinstallPackages',
