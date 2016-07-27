@@ -4,7 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
 const del = require('del');
-const install = require('gulp-install');
 const webpack = require('webpack-stream');
 const rename = require('gulp-rename');
 const chmod = require('gulp-chmod');
@@ -134,6 +133,7 @@ module.exports = function(gulp) {
    * @param {object} [args.bundledPkgs=null] - Object where the key is the name of the package to
    * bundle and key is the glob filter for files relative to the directory of the package
    * @param {string} [args.entrypoint='index.js'] - Name of the file used as entrypoint for the application
+   * @param {string} [args.npmRegistry='https://registry.npmjs.org'] - Url for the npm registry to use
    * @param {object} [args.runtime] - Properties of the runtime to be installed. By default it installs node 6.2.x. Set
    * to `null` to install no runtime.
    * @param {string} [args.runtime.destDir='./runtime'] - Folder where the runtime will be stored
@@ -148,6 +148,7 @@ module.exports = function(gulp) {
     const sources = args.sources;
     const bundledPkgs = args.bundledPkgs || null;
     const entrypoint = args.entrypoint || 'index.js';
+    const npmRegistry = args.npmRegistry || 'https://registry.npmjs.org';
     const runtime = args.runtime || {};
     if (_.isObject(runtime)) {
       _.defaults(runtime, {
@@ -174,7 +175,7 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:preinstallPackages', () => {
       return gulp.src(['./package.json'], {base: './'})
-        .pipe(install());
+        .pipe(shell(`npm install --registry ${npmRegistry}`, {cwd: __dirname, quiet: true}));
     });
 
     gulp.task('bundle:copySources', () => {
@@ -196,7 +197,7 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:installDeps', () => {
       return gulp.src([`${bundleOutputDir}/package.json`], {base: bundleOutputDir})
-        .pipe(install({production: true}));
+        .pipe(shell(`npm install --production --registry ${npmRegistry}`, {cwd: __dirname, quiet: true}));
     });
 
     gulp.task('bundle:webpackize', () => {
@@ -264,7 +265,7 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:compress', () => {
       return gulp.src('')
-        .pipe(shell(`tar czf ${bundleOutputName}.tar.gz bundle/ --transform s/^bundle/${bundleOutputName}/`,
+        .pipe(shell(`tar czf ${bundleOutputName}.tar.gz bundle/ --transform /bundle/${bundleOutputName}/`,
                     {cwd: buildDir}));
     });
 

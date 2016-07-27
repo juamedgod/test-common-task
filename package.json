@@ -1,6 +1,6 @@
 {
   "name": "bitnami-gulp-common-tasks",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Common tasks used in our tools",
   "author": "Bitnami",
   "license": "GPL-2.0",
@@ -19,7 +19,6 @@
     "gulp-eslint": "^2.0.0",
     "gulp-filter": "^4.0.0",
     "gulp-gunzip": "0.0.3",
-    "gulp-install": "^0.6.0",
     "gulp-istanbul": "^1.0.0",
     "gulp-mocha": "^2.2.0",
     "gulp-rename": "^1.2.2",
