@@ -203,7 +203,7 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:installDeps', () => {
       return gulp.src('')
-        .pipe(shell(`${npmCmd} --production`, {cwd: bundleOutputDir, quiet: true}));
+        .pipe(shell(`${npmCmd} install --production`, {cwd: bundleOutputDir, quiet: true}));
     });
 
     gulp.task('bundle:webpackize', () => {

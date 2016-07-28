@@ -1,6 +1,6 @@
 {
   "name": "bitnami-gulp-common-tasks",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Common tasks used in our tools",
   "author": "Bitnami",
   "license": "GPL-2.0",
