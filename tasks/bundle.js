@@ -133,7 +133,7 @@ module.exports = function(gulp) {
    * @param {object} [args.bundledPkgs=null] - Object where the key is the name of the package to
    * bundle and key is the glob filter for files relative to the directory of the package
    * @param {string} [args.entrypoint='index.js'] - Name of the file used as entrypoint for the application
-   * @param {string} [args.npmRegistry='https://registry.npmjs.org'] - Url for the npm registry to use
+   * @param {string} [args.npmRegistry=null] - Url for the npm registry to use. If null, default registry will be used
    * @param {object} [args.runtime] - Properties of the runtime to be installed. By default it installs node 6.2.x. Set
    * to `null` to install no runtime.
    * @param {string} [args.runtime.destDir='./runtime'] - Folder where the runtime will be stored
@@ -148,7 +148,7 @@ module.exports = function(gulp) {
     const sources = args.sources;
     const bundledPkgs = args.bundledPkgs || null;
     const entrypoint = args.entrypoint || 'index.js';
-    const npmRegistry = args.npmRegistry || 'https://registry.npmjs.org';
+    const npmRegistry = args.npmRegistry || null;
     const runtime = args.runtime || {};
     if (_.isObject(runtime)) {
       _.defaults(runtime, {
@@ -166,6 +166,12 @@ module.exports = function(gulp) {
     const postWebpackFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) ||
                                 _relativizeGlob(bundleOutputDir, args.sources);
 
+    let npmCmd = 'npm ';
+
+    if (npmRegistry) {
+      npmCmd += `--registry ${npmRegistry} `;
+    }
+
     gulp.task('bundle:clean', () => {
       return del([
         bundleOutputDir,
@@ -175,7 +181,7 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:preinstallPackages', () => {
       return gulp.src('')
-        .pipe(shell(`npm install --registry ${npmRegistry}`, {cwd: __dirname, quiet: true}));
+        .pipe(shell(`${npmCmd} install`, {cwd: __dirname, quiet: true}));
     });
 
     gulp.task('bundle:copySources', () => {
@@ -197,7 +203,7 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:installDeps', () => {
       return gulp.src('')
-        .pipe(shell(`npm install --production --registry ${npmRegistry}`, {cwd: bundleOutputDir, quiet: true}));
+        .pipe(shell(`${npmCmd} --production`, {cwd: bundleOutputDir, quiet: true}));
     });
 
     gulp.task('bundle:webpackize', () => {
