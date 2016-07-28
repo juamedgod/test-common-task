@@ -174,7 +174,7 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle:preinstallPackages', () => {
-      return gulp.src(['./package.json'], {base: './'})
+      return gulp.src('')
         .pipe(shell(`npm install --registry ${npmRegistry}`, {cwd: __dirname, quiet: true}));
     });
 
@@ -196,8 +196,8 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle:installDeps', () => {
-      return gulp.src([`${bundleOutputDir}/package.json`], {base: bundleOutputDir})
-        .pipe(shell(`npm install --production --registry ${npmRegistry}`, {cwd: __dirname, quiet: true}));
+      return gulp.src('')
+        .pipe(shell(`npm install --production --registry ${npmRegistry}`, {cwd: bundleOutputDir, quiet: true}));
     });
 
     gulp.task('bundle:webpackize', () => {
@@ -265,8 +265,10 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:compress', () => {
       return gulp.src('')
-        .pipe(shell(`tar czf ${bundleOutputName}.tar.gz bundle/ --transform /bundle/${bundleOutputName}/`,
-                    {cwd: buildDir}));
+        .pipe(shell(
+          `mv ./bundle ./${bundleOutputName} && \
+          tar czf ${bundleOutputName}.tar.gz ${bundleOutputName} && \
+          mv ./${bundleOutputName} ./bundle`, {cwd: buildDir}));
     });
 
     gulp.task('bundle-webpack', () => {
