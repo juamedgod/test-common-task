@@ -139,8 +139,8 @@ module.exports = function(gulp) {
    * @param {string} [args.runtime.destDir='./runtime'] - Folder where the runtime will be stored
    * @param {string} [args.runtime.name='node'] - Name of the runtime binary to be included
    * @param {string} [args.runtime.version='6.2.1'] - Version of the node runtime to be included.
-   * @param {string} [args.runtime.url] - If defined, it overrides the URL where the runtime is downloaded from (then
-   * `runtime.version` has no effect)
+   * @param {string} [args.runtime.url=null] - If defined, it overrides the URL where the runtime is downloaded from
+   * (then `runtime.version` has no effect)
    */
   function bundle(args) {
     const buildDir = args.buildDir;
