@@ -24,4 +24,4 @@ commonTasks.bundle({
 
 ## Task families
 
-Currently there are this task families: `bundle`, `ci`, `npm`, `test` and `install-node`.
+Currently there are these task families: `bundle`, `ci`, `npm`, `test` and `install-node`.
