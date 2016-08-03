@@ -4,7 +4,7 @@
   "description": "Common tasks used in our tools",
   "author": "Bitnami",
   "license": "GPL-2.0",
-  "repository" : { "type" : "git", "url" : "ssh://git@endor4:/gulp-common-tasks" },
+  "repository" : { "type" : "git", "url" : "git@github.com:bitnami/gulp-common-tasks.git" },
   "dependencies": {
     "babel-eslint": "^6.0.5",
     "babel-preset-es2015": "^6.9.0",
@@ -35,6 +35,6 @@
   },
   "devDependencies": {
     "eslint": "^2.13.1",
-    "eslint-config-bitnami": "^1.0.0"
+    "eslint-config-bitnami": "bitnami/eslint-config-bitnami#v1.0.0"
   }
 }

@@ -6,10 +6,10 @@ This package contains a bunch of common gulp tasks used across projects.
 
 ```
 const gulp = require('gulp');
-const commonTasks = require('gulp-common-tasks');
+const commonTasks = require('gulp-common-tasks')(gulp);
 
 // This adds the tasks in the `bundle` family
-commonTasks.bundle(gulp, {
+commonTasks.bundle({
   buildDir: './build',
   artifactName: 'myartifact',
   sources: [
