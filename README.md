@@ -24,4 +24,12 @@ commonTasks.bundle({
 
 ## Task families
 
-Currently there are these task families: `bundle`, `ci`, `npm`, `test` and `install-node`.
+Currently these task families are available: `bundle`, `ci`, `npm`, `test` and `install-node`.
+
+## Licensing
+
+This module is licensed under the GPL, Version 2.0. See the [COPYING](COPYING) file for the full license text.
+
+## Contributing
+
+Check our [Contributing](CONTRIBUTING.md) guide.
