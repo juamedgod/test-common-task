@@ -1,10 +1,13 @@
 {
   "name": "bitnami-gulp-common-tasks",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "Common tasks used in our tools",
   "author": "Bitnami",
   "license": "GPL-2.0",
-  "repository" : { "type" : "git", "url" : "git@github.com:bitnami/gulp-common-tasks.git" },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:bitnami/gulp-common-tasks.git"
+  },
   "dependencies": {
     "babel-eslint": "^6.0.5",
     "babel-preset-es2015": "^6.9.0",
@@ -20,6 +23,7 @@
     "gulp-filter": "^4.0.0",
     "gulp-gunzip": "0.0.3",
     "gulp-istanbul": "^1.0.0",
+    "gulp-jscpd": "bitnami/gulp-jscpd",
     "gulp-mocha": "^2.2.0",
     "gulp-rename": "^1.2.2",
     "gulp-shell": "^0.5.2",

@@ -1,7 +1,9 @@
 'use strict';
 
+const fs = require('fs-extra');
 const runSequence = require('run-sequence');
 const eslint = require('gulp-eslint');
+const jscpd = require('gulp-jscpd');
 const istanbul = require('gulp-istanbul');
 const del = require('del');
 const mocha = require('gulp-mocha');
@@ -10,6 +12,7 @@ module.exports = function(gulp) {
   /**
    * test tasks:
    * - `lint`
+   * - `cpd`
    * - `test`
    * - `test:prepare`
    * - `test:execute`
@@ -24,12 +27,14 @@ module.exports = function(gulp) {
     opts = opts || {};
     const tests = opts.tests;
     const sources = opts.sources;
+    const reportsFolder = './artifacts/reports';
     const namespace = opts.namespace || null;
     const cwd = opts.cwd || process.cwd();
     const reportsConfig = opts.reportsConfig || {
       test: 'spec',
       coverage: ['lcov', 'json', 'text-summary', 'html'],
-      lint: undefined
+      lint: undefined,
+      cpd: 'xml',
     };
 
     function taskName(n) {
@@ -54,7 +59,20 @@ module.exports = function(gulp) {
       // .pipe(eslint.failAfterError());
     });
 
+    gulp.task(taskName('cpd'), () => {
+      fs.ensureDirSync(reportsFolder);
+      return gulp.src(sources, {cwd: cwd})
+        .pipe(jscpd({
+          languages: ['javascript'],
+          reporter: reportsConfig.cpd,
+          output: `${reportsFolder}/cpd.xml`,
+          silent: false,
+          failOnError: false,
+        }));
+    });
+
     gulp.task(taskName('test:prepare'), () => {
+      fs.ensureDirSync(reportsFolder);
       return gulp.src(sources, {cwd: cwd})
       // Covering files
         .pipe(istanbul())
@@ -66,7 +84,10 @@ module.exports = function(gulp) {
       return gulp.src(tests, {read: false, cwd: cwd})
         .pipe(mocha({reporter: reportsConfig.test}))
       // Creating the reports after tests ran
-        .pipe(istanbul.writeReports({reporters: reportsConfig.coverage}));
+        .pipe(istanbul.writeReports({
+          dir: `${reportsFolder}/coverage`,
+          reporters: reportsConfig.coverage
+        }));
       // Enforce a coverage of at least 90%
       // .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
     });
@@ -81,8 +102,7 @@ module.exports = function(gulp) {
 
     gulp.task(taskName('test:clean'), () => {
       return del([
-        'coverage/**/*',
-        'reports/**/*'
+        'artifacts/reports/coverage/**/*'
       ]);
     });
   }

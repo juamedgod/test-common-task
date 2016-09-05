@@ -21,7 +21,8 @@ module.exports = function(gulp) {
       opts.reportsConfig = {
         test: 'mocha-teamcity-reporter',
         coverage: ['lcov', 'json', 'text-summary', 'html', 'teamcity'],
-        lint: eslintTeamcity
+        lint: eslintTeamcity,
+        cpd: 'xml'
       };
     }
     const namespace = opts.namespace || null;
