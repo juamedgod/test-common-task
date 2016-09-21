@@ -1,6 +1,6 @@
 {
   "name": "bitnami-gulp-common-tasks",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Common tasks used in our tools",
   "author": "Bitnami",
   "license": "GPL-2.0",
@@ -9,6 +9,7 @@
     "url": "git@github.com:bitnami/gulp-common-tasks.git"
   },
   "dependencies": {
+    "babel-eslint": "^6.1.2",
     "del": "^2.2.1",
     "eslint-plugin-import": "^1.8.1",
     "eslint-teamcity": "^1.1.0",
