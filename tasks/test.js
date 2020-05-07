@@ -1,10 +1,9 @@
 const fs = require('fs-extra');
-const runSequence = require('run-sequence');
+const runSequence = require('gulp4-run-sequence');
 const eslint = require('gulp-eslint');
 const jscpd = require('gulp-jscpd');
-const istanbul = require('gulp-istanbul');
 const del = require('del');
-const mocha = require('gulp-mocha');
+const shell = require('gulp-shell');
 
 module.exports = function(gulp) {
   /**
@@ -69,40 +68,25 @@ module.exports = function(gulp) {
         }));
     });
 
-    gulp.task(taskName('test:prepare'), () => {
+    gulp.task(taskName('test:prepare'), (cb) => {
       fs.ensureDirSync(reportsFolder);
-      return gulp.src(sources, {cwd: cwd})
-      // Covering files
-        .pipe(istanbul())
-      // Force `require` to return covered files
-        .pipe(istanbul.hookRequire());
+      cb(null);
     });
 
     gulp.task(taskName('test:execute'), () => {
-      return gulp.src(tests, {read: false, cwd: cwd})
-        .pipe(mocha({reporter: reportsConfig.test}))
-      // Creating the reports after tests ran
-        .pipe(istanbul.writeReports({
-          dir: `${reportsFolder}/coverage`,
-          reporters: reportsConfig.coverage
-        }));
+      return gulp.src('.')
+        .pipe(shell(`nyc --clean --report-dir=artifacts/reports/coverage/ --reporter=lcov --reporter=text --reporter=html mocha --reporter ${reportsConfig.test}`));
       // Enforce a coverage of at least 90%
       // .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
     });
 
-    gulp.task(taskName('test'), () => {
-      return runSequence(
-        taskName('test:clean'),
-        taskName('test:prepare'),
-        taskName('test:execute')
-      );
-    });
 
     gulp.task(taskName('test:clean'), () => {
       return del([
         'artifacts/reports/coverage/**/*'
       ]);
     });
+    gulp.task(taskName('test'), gulp.series([taskName('test:clean'), taskName('test:prepare'), taskName('test:execute')]));
   }
   return test;
 };

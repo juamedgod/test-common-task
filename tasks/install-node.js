@@ -1,7 +1,7 @@
 const download = require('gulp-download');
 const rename = require('gulp-rename');
 const chmod = require('gulp-chmod');
-const untar = require('gulp-vinyl-untar');
+const untar = require('gulp-untar');
 const gunzip = require('gulp-gunzip');
 const filter = require('gulp-filter');
 

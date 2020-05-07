@@ -7,11 +7,11 @@ const rename = require('gulp-rename');
 const chmod = require('gulp-chmod');
 const download = require('gulp-download');
 const shell = require('gulp-shell');
-const runSequence = require('run-sequence');
+const runSequence = require('gulp4-run-sequence');
 const {execSync} = require('child_process');
 
 function setupHooks(gulp, hookableSteps, hooks, context) {
-  const noOpTask = _.noop;
+  const noOpTask = function(cb) { cb(null); };
   const supportedHooks = {};
   _.each(hookableSteps, (s) => {
     supportedHooks[`pre:${s}`] = noOpTask;
@@ -207,7 +207,7 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle:preinstallPackages', () => {
-      return gulp.src('')
+      return gulp.src('.')
         .pipe(shell(`${npmCmd} install`, {cwd: __dirname, quiet: true}));
     });
 
@@ -222,13 +222,14 @@ module.exports = function(gulp) {
         .pipe(gulp.dest(bundleOutputDir));
     });
 
-    gulp.task('bundle:mergeDeps', () => {
-      return fs.writeFileSync(path.join(bundleOutputDir, 'package.json'),
-        JSON.stringify(_mergeDeps(JSON.parse(fs.readFileSync('./package.json')),
-          bundledPkgs), null, 2));
+    gulp.task('bundle:mergeDeps', (cb) => {
+      fs.writeFileSync(path.join(bundleOutputDir, 'package.json'),
+                       JSON.stringify(_mergeDeps(JSON.parse(fs.readFileSync('./package.json')),
+                                                 bundledPkgs), null, 2));
+      cb(null);
     });
     gulp.task('bundle:installDeps', () => {
-      return gulp.src('')
+      return gulp.src('.')
         .pipe(shell(`${npmInstallCmd}`, {cwd: bundleOutputDir, quiet: true}));
     });
 
@@ -239,24 +240,21 @@ module.exports = function(gulp) {
       const webpackConfig = {
         entry: {app: `${bundleOutputDir}/${entrypoint}`},
         target: 'node',
+        mode: 'production',
         node: { // tells webpack not to mock `__filename` nor `__dirname`
           __filename: false,
           __dirname: false,
+        },
+        resolve: {
+          modules: [bundleOutputDir, 'node_modules']
         },
         output: {
           filename: 'bundle.js'
         },
         module: {
-          loaders: [
-            {test: /\.json$/, loader: 'json'},
-          ]
-        },
-        resolve: {
-          root: [
-            path.resolve(bundleOutputDir)
-          ],
-          modulesDirectories: [
-            path.join(bundleOutputDir, 'node_modules/')
+          rules: [
+            {
+            },
           ]
         },
         externals
@@ -275,8 +273,9 @@ module.exports = function(gulp) {
       return del(postBundleFilter);
     });
 
-    gulp.task('bundle:renameEntryfile', () => {
+    gulp.task('bundle:renameEntryfile', (cb) => {
       fs.renameSync(path.join(bundleOutputDir, 'bundle.js'), path.join(bundleOutputDir, 'index.js'));
+      cb(null);
     });
 
     gulp.task('bundle:addRuntime', () => {
@@ -296,16 +295,23 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle:compress', () => {
-      return gulp.src('')
+      return gulp.src('.')
         .pipe(shell(
           `mv ./bundle ./${bundleOutputName} && \
           tar czf ${bundleOutputName}.tar.gz ${bundleOutputName} && \
           mv ./${bundleOutputName} ./bundle`, {cwd: buildDir}
         ));
     });
+    const context = {
+      npmInstall: function(npmArgs, opts) {
+        execSync(`${npmInstallCmd} ${npmArgs}`, opts);
+      },
+      bundleOutputDir,
+      buildDir
+    };
+    setupHooks(gulp, hookableSteps, hooks, context);
 
-    gulp.task('bundle-webpack', () => {
-      runSequence(
+    gulp.task('bundle-webpack', gulp.series([
         'bundle:clean',
         'bundle:preinstallPackages',
         'bundle:copySources',
@@ -321,11 +327,9 @@ module.exports = function(gulp) {
         'bundle:addRuntime',
         'bundle:addLicense',
         'bundle:compress'
-      );
-    });
+    ]));
 
-    gulp.task('bundle', () => {
-      runSequence(
+    gulp.task('bundle', gulp.series([
         'bundle:clean',
         'bundle:preinstallPackages',
         'bundle:copySources',
@@ -336,17 +340,8 @@ module.exports = function(gulp) {
         'bundle:addRuntime',
         'bundle:addLicense',
         'bundle:compress'
-      );
-    });
+      ]));
 
-    const context = {
-      npmInstall: function(npmArgs, opts) {
-        execSync(`${npmInstallCmd} ${npmArgs}`, opts);
-      },
-      bundleOutputDir,
-      buildDir
-    };
-    setupHooks(gulp, hookableSteps, hooks, context);
   }
   return bundle;
 };

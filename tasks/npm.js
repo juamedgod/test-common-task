@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const del = require('del');
 const babel = require('gulp-babel');
-const runSequence = require('run-sequence');
+const runSequence = require('gulp4-run-sequence');
 
 module.exports = function(gulp) {
   /**
