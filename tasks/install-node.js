@@ -1,8 +1,7 @@
 const download = require('gulp-download');
 const rename = require('gulp-rename');
 const chmod = require('gulp-chmod');
-const untar = require('gulp-untar');
-const gunzip = require('gulp-gunzip');
+const decompress = require('gulp-decompress');
 const filter = require('gulp-filter');
 
 module.exports = function(gulp) {
@@ -25,8 +24,7 @@ module.exports = function(gulp) {
 
     gulp.task(taskName('install-node'), () => {
       return download(`https://nodejs.org/dist/v${version}/node-v${version}-linux-x64.tar.gz`)
-        .pipe(gunzip())
-        .pipe(untar())
+        .pipe(decompress())
         .pipe(filter([`node-v${version}-linux-x64/bin/node`]))
         .pipe(rename('node'))
         .pipe(chmod(755))
