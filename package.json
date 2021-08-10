@@ -1,38 +1,71 @@
 {
-  "name": "bitnami-gulp-common-tasks",
-  "version": "3.0.2",
-  "description": "Common tasks used in our tools",
-  "author": "Bitnami",
-  "license": "GPL-2.0",
-  "repository": {
+  "_args": [
+    [
+      "github:bitnami/gulp-common-tasks#v3.0.0",
+      "/home/juanjo/projects/nami/nami-utils"
+    ]
+  ],
+  "_development": true,
+  "_from": "github:bitnami/gulp-common-tasks#v3.0.0",
+  "_id": "bitnami-gulp-common-tasks@github:bitnami/gulp-common-tasks#dcc2be46899feb01de872d5538345d7f12b77a7f",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/bitnami-gulp-common-tasks",
+  "_phantomChildren": {
+    "graceful-fs": "4.2.4",
+    "universalify": "0.1.2"
+  },
+  "_requested": {
     "type": "git",
-    "url": "git@github.com:bitnami/gulp-common-tasks.git"
+    "raw": "github:bitnami/gulp-common-tasks#v3.0.0",
+    "rawSpec": "github:bitnami/gulp-common-tasks#v3.0.0",
+    "saveSpec": "github:bitnami/gulp-common-tasks#v3.0.0",
+    "fetchSpec": null,
+    "gitCommittish": "v3.0.0"
+  },
+  "_requiredBy": [
+    "#DEV:/"
+  ],
+  "_resolved": "github:bitnami/gulp-common-tasks#dcc2be46899feb01de872d5538345d7f12b77a7f",
+  "_spec": "github:bitnami/gulp-common-tasks#v3.0.0",
+  "_where": "/home/juanjo/projects/nami/nami-utils",
+  "author": {
+    "name": "Bitnami"
+  },
+  "bugs": {
+    "url": "https://github.com/bitnami/gulp-common-tasks/issues"
   },
   "dependencies": {
     "babel-eslint": "^10.1.0",
     "del": "^5.1.0",
-    "eslint-teamcity": "^1.1.0",
     "fs-extra": "^8.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-chmod": "^1.3.0",
-    "gulp-download": "git+https://git@github.com/bitnami/gulp-download#v0.0.1",
+    "gulp-download": "github:bitnami/gulp-download#v0.0.1",
     "gulp-eslint": "^6.0.0",
     "gulp-filter": "^6.0.0",
-    "gulp-gunzip": "0.0.3",
-    "gulp-jscpd": "git+https://git@github.com/bitnami/gulp-jscpd#cec470c",
+    "gulp-decompress": "^3.0.0",
+    "gulp-jscpd": "github:bitnami/gulp-jscpd#cec470c",
     "gulp-rename": "^1.2.2",
     "gulp-shell": "^0.7.1",
     "gulp-tap": "^0.1.3",
-    "gulp-untar": "0.0.8",
     "gulp4-run-sequence": "^1.0.1",
-    "lodash": "^4.17.21",
-    "mocha-teamcity-reporter": "^1.1.1",
+    "lodash": "^4.17.11",
     "nyc": "^15.0.1",
     "webpack-stream": "^5.2.1"
   },
+  "description": "Common tasks used in our tools",
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-bitnami": "git+https://git@github.com/bitnami/eslint-config-bitnami#v2.0.0",
+    "eslint-config-bitnami": "github:bitnami/eslint-config-bitnami#v2.0.0",
     "eslint-plugin-import": "^2.20.2"
-  }
+  },
+  "homepage": "https://github.com/bitnami/gulp-common-tasks#readme",
+  "license": "GPL-2.0",
+  "name": "bitnami-gulp-common-tasks",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/bitnami/gulp-common-tasks.git"
+  },
+  "version": "3.0.0"
 }

@@ -1,5 +1,3 @@
-const eslintTeamcity = require('eslint-teamcity');
-
 module.exports = function(gulp) {
   /**
    * ci tasks:
@@ -17,9 +15,8 @@ module.exports = function(gulp) {
     opts = {...opts || {}};
     if (!opts.reportsConfig) {
       opts.reportsConfig = {
-        test: 'mocha-teamcity-reporter',
-        coverage: ['lcov', 'json', 'text-summary', 'html', 'teamcity'],
-        lint: eslintTeamcity,
+        test: 'spec',
+        coverage: ['lcov', 'json', 'text-summary', 'html'],
         cpd: 'xml'
       };
     }
